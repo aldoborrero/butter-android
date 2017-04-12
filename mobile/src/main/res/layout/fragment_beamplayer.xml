@@ -25,7 +25,6 @@
     android:background="@color/bg_dark">
 
     <ImageView
-        android:id="@+id/popcorn_logo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
@@ -86,7 +85,6 @@
                     android:background="@drawable/base_gradient" />
 
                 <LinearLayout
-                    android:id="@+id/sliding_top_layout"
                     android:layout_width="match_parent"
                     android:layout_height="96dp"
                     android:layout_alignParentBottom="true"
@@ -135,7 +133,6 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/sliding_bottom_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
