@@ -20,17 +20,13 @@ package butter.droid.tv.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-
-import javax.inject.Inject;
-
-import butter.droid.base.manager.internal.updater.ButterUpdateManager;
 import butter.droid.tv.R;
 import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.base.TVBaseActivity;
 
 public class TVMainActivity extends TVBaseActivity {
 
-    @Inject ButterUpdateManager butterUpdateManager;
+//    @Inject ButterUpdateManager butterUpdateManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +41,18 @@ public class TVMainActivity extends TVBaseActivity {
     protected void onResume() {
         super.onResume();
 
-        butterUpdateManager.setListener(new ButterUpdateManager.Listener() {
-            @Override
-            public void updateAvailable(String filePath) {
-                TVUpdateActivity.startActivity(TVMainActivity.this);
-            }
-        });
-        butterUpdateManager.checkUpdates(false);
+//        butterUpdateManager.setListener(new ButterUpdateManager.Listener() {
+//            @Override
+//            public void onNewUpdateAvailable(String filePath) {
+//                TVUpdateActivity.startActivity(TVMainActivity.this);
+//            }
+//
+//            @Override
+//            public void onNoUpdatesAvailable() {
+//
+//            }
+//        });
+//        butterUpdateManager.checkUpdates(false);
     }
 
     public static Intent startActivity(Activity activity) {

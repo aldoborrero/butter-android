@@ -29,18 +29,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
-
-import net.rdrei.android.dirchooser.DirectoryChooserConfig;
-import net.rdrei.android.dirchooser.DirectoryChooserFragment;
-
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import butter.droid.MobileButterApplication;
 import butter.droid.R;
-import butter.droid.ui.about.AboutActivity;
-import butter.droid.ui.ButterBaseActivity;
 import butter.droid.adapters.PreferencesAdapter;
 import butter.droid.base.content.preferences.PrefItem;
 import butter.droid.base.content.preferences.Prefs.PrefKey;
@@ -54,8 +44,14 @@ import butter.droid.base.widget.recycler.RecyclerItemClickListener;
 import butter.droid.fragments.dialog.ColorPickerDialogFragment;
 import butter.droid.fragments.dialog.NumberDialogFragment;
 import butter.droid.fragments.dialog.SeekBarDialogFragment;
+import butter.droid.ui.ButterBaseActivity;
+import butter.droid.ui.about.AboutActivity;
 import butter.droid.utils.ToolbarUtils;
 import butterknife.BindView;
+import java.util.Map;
+import javax.inject.Inject;
+import net.rdrei.android.dirchooser.DirectoryChooserConfig;
+import net.rdrei.android.dirchooser.DirectoryChooserFragment;
 
 public class PreferencesActivity extends ButterBaseActivity implements PreferencesView, RecyclerClickListener {
 
@@ -98,14 +94,12 @@ public class PreferencesActivity extends ButterBaseActivity implements Preferenc
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         presenter.onDestroy();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         toolbar.setMinimumHeight(
                 (int) ResourceUtils.getAttributeDimension(this, this.getTheme(), R.attr.actionBarSize));
     }

@@ -29,6 +29,7 @@ ext {
     daggerVersion = "2.9"
     javaxAnnotationVersion = "1.2"
     torrentstreamVersion = '2.3.0'
+    androidJobVersion = '1.1.9'
 }
 
 allprojects {

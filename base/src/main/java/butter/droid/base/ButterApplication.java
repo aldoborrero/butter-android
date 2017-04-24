@@ -18,17 +18,12 @@
 package butter.droid.base;
 
 import android.app.Application;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.support.multidex.MultiDex;
-import android.support.v4.app.NotificationCompat;
 import butter.droid.base.content.preferences.PreferencesHandler;
 import butter.droid.base.manager.internal.beaming.BeamManager;
 import butter.droid.base.manager.internal.updater.ButterUpdateManager;
@@ -44,13 +39,12 @@ import java.io.File;
 import javax.inject.Inject;
 import timber.log.Timber;
 
-public abstract class ButterApplication extends Application implements ButterUpdateManager.Listener {
+public abstract class ButterApplication extends Application {
 
     private static String sDefSystemLanguage;
     private static ButterApplication sThis;
 
     @Inject Picasso picasso;
-    @Inject ButterUpdateManager updateManager;
     @Inject BeamManager beamManager;
     @Inject PreferencesHandler preferencesHandler;
 
@@ -87,9 +81,6 @@ public abstract class ButterApplication extends Application implements ButterUpd
             Timber.plant(new Timber.DebugTree());
         }
 
-        updateManager.setListener(this);
-        updateManager.checkUpdates(false);
-
         if (VersionUtils.isUsingCorrectBuild()) {
             TorrentService.start(this);
         }
@@ -108,6 +99,8 @@ public abstract class ButterApplication extends Application implements ButterUpd
         Timber.i("Chosen cache location: " + directory);
 
         Picasso.setSingletonInstance(picasso);
+
+        ButterUpdateManager.listenUpdates(this);
     }
 
     @Override
@@ -127,26 +120,26 @@ public abstract class ButterApplication extends Application implements ButterUpd
         return sDefSystemLanguage;
     }
 
-    @Override
-    public void updateAvailable(String updateFile) {
-        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (updateFile.length() > 0) {
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.ic_notif_logo)
-                    .setContentTitle(getString(R.string.update_available))
-                    .setContentText(getString(R.string.press_install))
-                    .setAutoCancel(true)
-                    .setDefaults(NotificationCompat.DEFAULT_ALL);
-
-            Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
-            notificationIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE);
-
-            notificationBuilder.setContentIntent(PendingIntent.getActivity(this, 0, notificationIntent, 0));
-
-            nm.notify(ButterUpdateManager.NOTIFICATION_ID, notificationBuilder.build());
-        }
-    }
+//    @Override
+//    public void onNewUpdateAvailable(String updateFile) {
+//        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//        if (updateFile.length() > 0) {
+//            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+//                    .setSmallIcon(R.drawable.ic_notif_logo)
+//                    .setContentTitle(getString(R.string.update_available))
+//                    .setContentText(getString(R.string.press_install))
+//                    .setAutoCancel(true)
+//                    .setDefaults(NotificationCompat.DEFAULT_ALL);
+//
+//            Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
+//            notificationIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE_MIME_TYPE);
+//
+//            notificationBuilder.setContentIntent(PendingIntent.getActivity(this, 0, notificationIntent, 0));
+//
+//            nm.notify(ButterUpdateManager.NOTIFICATION_ID, notificationBuilder.build());
+//        }
+//    }
 
     public abstract BaseInternalComponent getComponent();
 

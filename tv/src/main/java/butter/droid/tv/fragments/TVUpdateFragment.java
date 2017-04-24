@@ -17,6 +17,7 @@
 
 package butter.droid.tv.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -59,8 +60,9 @@ public class TVUpdateFragment extends GuidedStepFragment {
 
     @Override
     public void onCreateActions(@NonNull List<GuidedAction> actions, Bundle savedInstanceState) {
-        GuidedAction acceptAction = new GuidedAction.Builder().id(R.id.action_update_now).hasNext(true).title(getString(R.string.now)).build();
-        GuidedAction declineAction = new GuidedAction.Builder().id(R.id.action_update_later).hasNext(true).title(getString(R.string.later)).build();
+        final Activity context = getActivity();
+        GuidedAction acceptAction = new GuidedAction.Builder(context).id(R.id.action_update_now).hasNext(true).title(getString(R.string.now)).build();
+        GuidedAction declineAction = new GuidedAction.Builder(context).id(R.id.action_update_later).hasNext(true).title(getString(R.string.later)).build();
         actions.add(acceptAction);
         actions.add(declineAction);
         super.onCreateActions(actions, savedInstanceState);
@@ -72,7 +74,7 @@ public class TVUpdateFragment extends GuidedStepFragment {
             case R.id.action_update_now:
                 String updateFile = prefManager.get(ButterUpdateManager.UPDATE_FILE, "");
                 Intent updateIntent = new Intent(Intent.ACTION_VIEW);
-                updateIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE);
+                updateIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE_MIME_TYPE);
 
                 getActivity().startActivity(updateIntent);
             case R.id.action_update_later:

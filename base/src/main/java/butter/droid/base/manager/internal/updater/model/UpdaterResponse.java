@@ -19,15 +19,15 @@ package butter.droid.base.manager.internal.updater.model;
 
 import java.util.Map;
 
-public class UpdaterData {
+public class UpdaterResponse {
 
-    public Map<String, Map<String, Arch>> mobile;
-    public Map<String, Map<String, Arch>> tv;
+    public Map<String, Map<String, Update>> updates;
 
-    public class Arch {
+    public static class Update {
         public int versionCode;
         public String versionName;
         public String checksum;
         public String updateUrl;
     }
+
 }

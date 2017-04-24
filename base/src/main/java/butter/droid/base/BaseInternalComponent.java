@@ -23,8 +23,10 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import butter.droid.base.manager.internal.beaming.BeamPlayerNotificationService;
+import butter.droid.base.manager.internal.updater.ButterUpdateManager;
 import butter.droid.base.manager.internal.vlc.PlayerManager;
 import butter.droid.base.providers.media.VodoProvider;
+import butter.droid.base.sync.ButterUpdaterJob;
 import butter.droid.base.torrent.TorrentService;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -35,6 +37,8 @@ public interface BaseInternalComponent {
     void inject(BeamPlayerNotificationService service);
 
     void inject(TorrentService service);
+
+    void inject(ButterUpdaterJob job);
 
     Context context();
 
@@ -56,4 +60,5 @@ public interface BaseInternalComponent {
 
     WifiManager wifiManager();
 
+    ButterUpdateManager butterUpdateManager();
 }

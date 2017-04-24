@@ -1,12 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="butter.droid.base">
+    package="butter.droid.base">
 
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
-	<application>
+    <application>
+        <!-- Receivers -->
+        <receiver android:name=".manager.internal.updater.UpdatesBroadcastReceiver">
+            <intent-filter>
+                <action android:name="butter.droid.updater.UpdatesBroadcastReceiver.UPDATE_AVAILABLE" />
+            </intent-filter>
+        </receiver>
 
-		<service android:name="butter.droid.base.torrent.TorrentService" />
-
-	</application>
+        <!-- Services -->
+        <service android:name="butter.droid.base.torrent.TorrentService" />
+        <service android:name=".manager.internal.updater.ButterUpdaterService" />
+    </application>
 
 </manifest>

@@ -75,6 +75,8 @@ dependencies {
     compile project(':vlc')
     compile project(':connectsdk')
 
+    compile "com.evernote:android-job:$androidJobVersion"
+
     annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.ext.daggerVersion}"
     annotationProcessor "com.jakewharton:butterknife-compiler:${rootProject.ext.butterknifeVersion}"
 

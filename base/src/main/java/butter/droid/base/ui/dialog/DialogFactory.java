@@ -5,6 +5,7 @@ import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.support.annotation.IntDef;
 import butter.droid.base.R;
@@ -45,4 +46,35 @@ public class DialogFactory {
                 }).create();
     }
 
+    public static AlertDialog createNewVersionUpdateDialog(final Context context, final ActionCallback callback) {
+        return new AlertDialog.Builder(context)
+                .setTitle(R.string.update_available)
+                .setMessage(R.string.press_install)
+                .setCancelable(true)
+                .setOnCancelListener(new OnCancelListener() {
+                    @Override
+                    public void onCancel(final DialogInterface dialog) {
+                        if (callback != null) {
+                            callback.onButtonClick((Dialog) dialog, ACTION_NEGATIVE);
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        if (callback != null) {
+                            callback.onButtonClick((Dialog) dialog, ACTION_NEGATIVE);
+                        }
+                    }
+                })
+                .setPositiveButton(R.string.install, new OnClickListener() {
+                    @Override
+                    public void onClick(final DialogInterface dialog, final int which) {
+                        if (callback != null) {
+                            callback.onButtonClick((Dialog) dialog, ACTION_POSITIVE);
+                        }
+                    }
+                })
+                .create();
+    }
 }
