@@ -23,7 +23,6 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import butter.droid.base.manager.internal.beaming.BeamPlayerNotificationService;
-import butter.droid.base.manager.internal.updater.ButterUpdateManager;
 import butter.droid.base.manager.internal.vlc.PlayerManager;
 import butter.droid.base.providers.media.VodoProvider;
 import butter.droid.base.sync.ButterUpdaterJob;
@@ -60,5 +59,4 @@ public interface BaseInternalComponent {
 
     WifiManager wifiManager();
 
-    ButterUpdateManager butterUpdateManager();
 }

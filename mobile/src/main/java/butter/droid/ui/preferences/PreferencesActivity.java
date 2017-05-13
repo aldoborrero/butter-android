@@ -76,8 +76,8 @@ public class PreferencesActivity extends ButterBaseActivity implements Preferenc
                 .inject(this);
 
         super.onCreate(savedInstanceState, R.layout.activity_preferences);
-        setSupportActionBar(toolbar);
 
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.preferences);
 
@@ -89,7 +89,6 @@ public class PreferencesActivity extends ButterBaseActivity implements Preferenc
 
         presenter.onCreate();
     }
-
 
     @Override
     protected void onDestroy() {
@@ -253,8 +252,7 @@ public class PreferencesActivity extends ButterBaseActivity implements Preferenc
         openActivity(AboutActivity.getIntent(this));
     }
 
-    private void openListDialog(@StringRes int title, String[] items, int currentItem,
-            OnClickListener listener) {
+    private void openListDialog(@StringRes int title, String[] items, int currentItem, OnClickListener listener) {
         Bundle args = new Bundle();
         args.putString(StringArraySelectorDialogFragment.TITLE, getString(title));
         args.putStringArray(StringArraySelectorDialogFragment.ARRAY, items);

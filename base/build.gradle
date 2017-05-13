@@ -69,6 +69,8 @@ dependencies {
 
     compile "com.github.se-bastiaan:TorrentStream-Android:${torrentstreamVersion}"
 
+    compile "io.reactivex.rxjava2:rxjava:${rxjavaVersion}"
+
     compile 'de.timroes:aXMLRPC:1.8.1'
     compile "com.google.dagger:dagger:${rootProject.ext.daggerVersion}"
 

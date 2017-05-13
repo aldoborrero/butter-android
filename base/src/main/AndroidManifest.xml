@@ -7,9 +7,13 @@
 
     <application>
         <!-- Receivers -->
-        <receiver android:name=".manager.internal.updater.UpdatesBroadcastReceiver">
+        <receiver
+            android:exported="false"
+            android:name=".manager.internal.updater.NewUpdatesBroadcastReceiver">
             <intent-filter>
-                <action android:name="butter.droid.updater.UpdatesBroadcastReceiver.UPDATE_AVAILABLE" />
+                <action android:name="butter.droid.updater.NewUpdatesBroadcastReceiver.ACTION_UPDATE_AVAILABLE" />
+                <action android:name="butter.droid.updater.NewUpdatesBroadcastReceiver.ACTION_NO_UPDATE_AVAILABLE" />
+                <action android:name="butter.droid.updater.NewUpdatesBroadcastReceiver.ACTION_ERROR_DOWNLOADING" />
             </intent-filter>
         </receiver>
 

@@ -210,6 +210,7 @@ public abstract class BasePreferencesPresenterImpl implements OnSharedPreference
             case Prefs.LIBTORRENT_AUTOMATIC_PORT:
             case Prefs.SHOW_VPN:
             case Prefs.AUTOMATIC_UPDATES:
+            case Prefs.UPDATES_ON_WIFI_ONLY:
                 prefManager.save(item.getPrefKey(), !(Boolean) item.getValue());
                 break;
             case Prefs.SUBTITLE_COLOR:
@@ -257,7 +258,7 @@ public abstract class BasePreferencesPresenterImpl implements OnSharedPreference
                 updatePixelFormat(item);
                 break;
             case Prefs.CHECK_UPDATE:
-//                updateManager.checkUpdatesManually();
+                updateManager.checkUpdates();
                 break;
             case Prefs.REPORT_BUG:
                 Intent i = new Intent(Intent.ACTION_VIEW);

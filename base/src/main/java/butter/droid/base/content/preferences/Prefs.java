@@ -27,7 +27,7 @@ public final class Prefs {
     // region StringDef
 
     @StringDef({SUBTITLE_COLOR, SUBTITLE_SIZE, SUBTITLE_STROKE_WIDTH, SUBTITLE_STROKE_COLOR, SUBTITLE_DEFAULT_LANGUAGE,
-            STORAGE_LOCATION, REMOVE_CACHE, HW_ACCELERATION, AUTOMATIC_UPDATES, DEFAULT_PROVIDER, DEFAULT_PLAYER,
+            STORAGE_LOCATION, REMOVE_CACHE, HW_ACCELERATION, AUTOMATIC_UPDATES, UPDATES_ON_WIFI_ONLY, DEFAULT_PROVIDER, DEFAULT_PLAYER,
             DEFAULT_PLAYER_NAME, WIFI_ONLY, LOCALE, DRAWER_LEARNED, LIBTORRENT_CONNECTION_LIMIT,
             LIBTORRENT_DOWNLOAD_LIMIT, LIBTORRENT_UPLOAD_LIMIT, LIBTORRENT_LISTENING_PORT, LIBTORRENT_AUTOMATIC_PORT,
             SHOW_VPN, PIXEL_FORMAT, QUALITY_DEFAULT, CHECK_UPDATE, REPORT_BUG, CHANGE_LOG, NOTICE, VERSION, ABOUT})
@@ -52,6 +52,7 @@ public final class Prefs {
     public static final String REMOVE_CACHE = "remove_cache";
     public static final String HW_ACCELERATION = "hw_acceleration"; // TODO: 12/9/16 This is never used
     public static final String AUTOMATIC_UPDATES = "auto_updates";
+    public static final String UPDATES_ON_WIFI_ONLY = "updates_on_wifi_only";
     public static final String DEFAULT_PROVIDER = "default_provider";
     public static final String DEFAULT_PLAYER = "default_player";
     public static final String DEFAULT_PLAYER_NAME = "default_player_name";

@@ -18,7 +18,6 @@
 package butter.droid.ui;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.view.Menu;
@@ -33,34 +32,10 @@ import javax.inject.Inject;
 
 public class ButterBaseActivity extends TorrentBaseActivity implements BeamManager.BeamListener {
 
-//    @Inject ButterUpdateManager updateManager;
     @Inject BeamManager beamManager;
     @Inject PreferencesHandler preferencesHandler;
 
     protected Boolean showCasting = false;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState, int layoutId) {
-        super.onCreate(savedInstanceState, layoutId);
-
-//        if(!VersionUtils.isUsingCorrectBuild()) {
-//            new AlertDialog.Builder(this)
-//                    .setMessage(butter.droid.base.R.string.wrong_abi)
-//                    .setCancelable(false)
-//                    .show();
-//
-//            updateManager.setListener(new ButterUpdateManager.Listener() {
-//                @Override
-//                public void onNewUpdateAvailable(String updateFile) {
-//                    Intent installIntent = new Intent(Intent.ACTION_VIEW);
-//                    installIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE_MIME_TYPE);
-//                    installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(installIntent);
-//                }
-//            });
-//            updateManager.checkUpdatesManually();
-//        }
-    }
 
     @Override
     protected void onResume() {

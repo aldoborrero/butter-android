@@ -92,6 +92,8 @@
     <string name="updates">Updates</string>
     <string name="auto_updates">Automatic updates</string>
     <string name="check_for_updates">Check for updates</string>
+    <string name="download_over_wifi_only">Download updates on Wi-Fi only</string>
+    <string name="error_checking_for_updates">Error checking for updates. Please try again later.</string>
     <string name="last_check">Last check</string>
     <string name="about_app">About</string>
     <string name="version">Version</string>
@@ -380,5 +382,7 @@ By using \'BUTTER\' or accessing this site you affirm that you are either more t
 
     <!-- PTVSettingsFragment -->
     <string name="version_pref">Version</string>
+    <string name="butter_updater">Butter Updater</string>
+    <string name="downloading_new_butter_update">Downloading a new Butter update...</string>
 
 </resources>

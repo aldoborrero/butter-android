@@ -24,6 +24,7 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 import butter.droid.base.BaseApplicationComponent;
+import butter.droid.base.manager.internal.updater.RxAndroidDownloaderManager;
 import butter.droid.base.manager.network.NetworkManager;
 import butter.droid.base.manager.prefs.PrefManager;
 import butter.droid.base.providers.media.VodoProvider;
@@ -60,4 +61,5 @@ public interface ProviderComponent {
 
     TelephonyManager telephonyManager();
 
+    RxAndroidDownloaderManager rxDownloaderManager();
 }

@@ -17,35 +17,9 @@
 
 package butter.droid.tv.activities.base;
 
-import android.os.Bundle;
 import butter.droid.tv.ui.search.TVSearchActivity;
 
 public abstract class TVBaseActivity extends TVTorrentBaseActivity {
-
-//	@Inject ButterUpdateManager updateManager;
-
-	@Override
-	protected void onCreate(Bundle savedInstanceState, int layoutId) {
-		super.onCreate(savedInstanceState, layoutId);
-
-//		if(!VersionUtils.isUsingCorrectBuild()) {
-//			new AlertDialog.Builder(this)
-//					.setMessage(butter.droid.base.R.string.wrong_abi)
-//					.setCancelable(false)
-//					.show();
-//
-//			updateManager.setListener(new ButterUpdateManager.Listener() {
-//				@Override
-//				public void onNewUpdateAvailable(String updateFile) {
-//					Intent installIntent = new Intent(Intent.ACTION_VIEW);
-//					installIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE_MIME_TYPE);
-//					installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//					startActivity(installIntent);
-//				}
-//			});
-//			updateManager.checkUpdatesManually();
-//		}
-	}
 
 	@Override
 	public boolean onSearchRequested() {

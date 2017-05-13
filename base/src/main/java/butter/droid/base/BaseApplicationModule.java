@@ -47,8 +47,7 @@ public class BaseApplicationModule {
     }
 
     @Provides @Singleton public SharedPreferences provideSharedPreferences(Context context) {
-        return new ObscuredSharedPreferences(context,
-                context.getSharedPreferences(Constants.PREFS_FILE, Context.MODE_PRIVATE));
+        return new ObscuredSharedPreferences(context, context.getSharedPreferences(Constants.PREFS_FILE, Context.MODE_PRIVATE));
     }
 
     @Provides @Singleton public Resources provideResources(Context context) {

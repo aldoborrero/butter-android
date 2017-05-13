@@ -1,7 +1,5 @@
 package butter.droid.base.content.preferences;
 
-import static butter.droid.base.content.preferences.Prefs.DEFAULT_PROVIDER;
-
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -35,6 +33,8 @@ import java.util.Locale;
 import java.util.Map;
 import javax.inject.Inject;
 
+import static butter.droid.base.content.preferences.Prefs.DEFAULT_PROVIDER;
+
 @Reusable
 public class PreferencesHandler {
 
@@ -52,7 +52,8 @@ public class PreferencesHandler {
     /**
      * @return Array of preference keyys that need to be displayed
      */
-    @NonNull public String[] getPreferencesOrder(boolean isTV) {
+    @NonNull
+    public String[] getPreferencesOrder(boolean isTV) {
         List<String> keys = new ArrayList<>();
 
         // general
@@ -105,6 +106,7 @@ public class PreferencesHandler {
         // updates
         keys.add(Prefs.TITLE_UPDATES);
         keys.add(Prefs.AUTOMATIC_UPDATES);
+        keys.add(Prefs.UPDATES_ON_WIFI_ONLY);
         keys.add(Prefs.CHECK_UPDATE);
 
         // about
@@ -132,7 +134,8 @@ public class PreferencesHandler {
 
     }
 
-    @NonNull public PrefItem getPreferenceItem(@PrefKey String key) {
+    @NonNull
+    public PrefItem getPreferenceItem(@PrefKey String key) {
         switch (key) {
             case DEFAULT_PROVIDER:
                 return PrefItem.newBuilder()
@@ -473,6 +476,21 @@ public class PreferencesHandler {
                             }
                         })
                         .build();
+            case Prefs.UPDATES_ON_WIFI_ONLY:
+                return PrefItem.newBuilder()
+                        .setIconResource(R.drawable.ic_prefs_wifi_only)
+                        .setTitleResource(R.string.download_over_wifi_only)
+                        .setPreferenceKey(Prefs.UPDATES_ON_WIFI_ONLY)
+                        .setValue(downloadUpdatesWifiOnly())
+                        .setSubtitleGenerator(new SubtitleGenerator() {
+                            @Override
+                            public String get(PrefItem item) {
+                                return ((Boolean) item.getValue()) ? resources.getString(
+                                        R.string.enabled) : resources.getString(
+                                        R.string.disabled);
+                            }
+                        })
+                        .build();
             case Prefs.CHECK_UPDATE:
                 return PrefItem.newBuilder()
                         .setIconResource(R.drawable.ic_prefs_check_update)
@@ -485,8 +503,7 @@ public class PreferencesHandler {
                                 long timeStamp = (long) item.getValue();
                                 Calendar cal = Calendar.getInstance(Locale.getDefault());
                                 cal.setTimeInMillis(timeStamp);
-                                String time = SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM,
-                                        Locale.getDefault()).format(timeStamp);
+                                String time = SimpleDateFormat.getTimeInstance(SimpleDateFormat.MEDIUM, Locale.getDefault()).format(timeStamp);
                                 String date = DateFormat.format("dd-MM-yyy", cal).toString();
                                 return resources.getString(R.string.last_check) + ": " + date + " " + time;
                             }
@@ -585,7 +602,8 @@ public class PreferencesHandler {
                 .build();
     }
 
-    @ColorInt public int getSubtitleColor() {
+    @ColorInt
+    public int getSubtitleColor() {
         return prefManager.get(Prefs.SUBTITLE_COLOR, Color.WHITE);
     }
 
@@ -621,14 +639,14 @@ public class PreferencesHandler {
         return prefManager.get(Prefs.DEFAULT_PROVIDER, ProviderManager.PROVIDER_TYPE_MOVIE);
     }
 
-    @Nullable public String getDefaultPlayer() {
+    @Nullable
+    public String getDefaultPlayer() {
         return prefManager.get(Prefs.DEFAULT_PLAYER, null);
     }
 
     public boolean wifiOnly() {
         return prefManager.get(Prefs.WIFI_ONLY, true);
     }
-
 
     public String getLocale() {
         return prefManager.get(Prefs.LOCALE, ButterApplication.getSystemLanguage());
@@ -666,7 +684,12 @@ public class PreferencesHandler {
         return prefManager.get(Prefs.QUALITY_DEFAULT, "720p");
     }
 
-    @ColorInt public int getSubtitleStrokeColor() {
+    @ColorInt
+    public int getSubtitleStrokeColor() {
         return prefManager.get(Prefs.SUBTITLE_STROKE_COLOR, Color.BLACK);
+    }
+
+    public boolean downloadUpdatesWifiOnly() {
+        return prefManager.get(Prefs.UPDATES_ON_WIFI_ONLY, true);
     }
 }

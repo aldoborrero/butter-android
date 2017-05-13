@@ -18,17 +18,13 @@
 package butter.droid.base;
 
 import android.annotation.SuppressLint;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-
-import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
+import javax.inject.Singleton;
 
 @Module
 public class AndroidModule {
@@ -45,11 +41,4 @@ public class AndroidModule {
         return (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
     }
 
-    @Provides @Singleton LocalBroadcastManager provideLocalBroadcastManager(Context context) {
-        return LocalBroadcastManager.getInstance(context);
-    }
-
-    @Provides @Singleton DownloadManager provideDownloadManager(Context context) {
-        return (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-    }
 }

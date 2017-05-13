@@ -26,7 +26,6 @@ import android.content.res.Configuration;
 import android.support.multidex.MultiDex;
 import butter.droid.base.content.preferences.PreferencesHandler;
 import butter.droid.base.manager.internal.beaming.BeamManager;
-import butter.droid.base.manager.internal.updater.ButterUpdateManager;
 import butter.droid.base.torrent.TorrentService;
 import butter.droid.base.utils.FileUtils;
 import butter.droid.base.utils.LocaleUtils;
@@ -100,7 +99,7 @@ public abstract class ButterApplication extends Application {
 
         Picasso.setSingletonInstance(picasso);
 
-        ButterUpdateManager.listenUpdates(this);
+//        ButterUpdateManager.listenUpdates(this);
     }
 
     @Override

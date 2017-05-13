@@ -38,18 +38,24 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
+import android.text.TextUtils;
 import butter.droid.base.BuildConfig;
 import butter.droid.base.Internal;
-import butter.droid.base.content.preferences.PreferencesHandler;
+import butter.droid.base.R;
+import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.manager.internal.updater.RxAndroidDownloaderManager.DownloadRequest;
 import butter.droid.base.manager.internal.updater.model.ApplicationMetadata;
 import butter.droid.base.manager.internal.updater.model.UpdaterResponse;
 import butter.droid.base.manager.internal.updater.model.UpdaterResponse.Update;
 import butter.droid.base.manager.prefs.PrefManager;
 import butter.droid.base.utils.IntegrityUtils;
 import com.google.gson.Gson;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.inject.Inject;
@@ -67,6 +73,8 @@ public class ButterUpdateManager {
     public static final String LAST_UPDATE_CHECK = "update_check";
     public static final String UPDATE_FILE = "update_file";
 
+    private static final String DEFAULT_BUTTER_APK_NAME = "butter.apk";
+
     private static final String LAST_UPDATE_KEY = "last_update";
     private static final String SHA1_TIME = "sha1_update_time";
     private static final String SHA1_KEY = "sha1_update";
@@ -75,21 +83,24 @@ public class ButterUpdateManager {
 
     private final String DATA_URLS[] = BuildConfig.UPDATE_URLS;
 
+    private final Context context;
     private final OkHttpClient httpClient;
     private final Gson gson;
-    private final PreferencesHandler preferencesHandler;
     private final PrefManager prefManager;
     private final ApplicationMetadata applicationMetadata;
+    private final RxAndroidDownloaderManager rxDownloadManager;
 
     private final AtomicBoolean checkingUpdates = new AtomicBoolean(false);
 
     @Inject
-    public ButterUpdateManager(Context context, OkHttpClient okHttpClient, Gson gson, PreferencesHandler preferencesHandler, PrefManager prefManager) {
+    public ButterUpdateManager(final Context context, final OkHttpClient okHttpClient, final Gson gson, final PrefManager prefManager,
+            final RxAndroidDownloaderManager rxDownloadManager) {
+        this.context = context;
         this.httpClient = okHttpClient;
         this.gson = gson;
-        this.preferencesHandler = preferencesHandler;
         this.prefManager = prefManager;
         this.applicationMetadata = ApplicationMetadata.obtain(context);
+        this.rxDownloadManager = rxDownloadManager;
 
         ButterUpdateManager.NOTIFICATION_ID += IntegrityUtils.Checksums.crc32(applicationMetadata.getPackageName());
     }
@@ -97,6 +108,7 @@ public class ButterUpdateManager {
     public void checkUpdates() {
         if (checkingUpdates.getAndSet(true)) {
             // Ignoring until this is finished
+            // TODO: 13/05/2017 Display messages if user presses multiple times the button 
             return;
         }
 
@@ -105,8 +117,9 @@ public class ButterUpdateManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                // Notify update failed
+                prefManager.save(ButterUpdateManager.LAST_UPDATE_CHECK, new Date().getTime());
                 checkingUpdates.set(false);
+                NewUpdatesBroadcastReceiver.setActionErrorChecking(context);
             }
 
             @Override
@@ -119,144 +132,56 @@ public class ButterUpdateManager {
                     final Map<String, Update> channels = data.updates.get(applicationMetadata.getChannel());
                     final Update update = channels.get(applicationMetadata.getVariant());
 
-                    downloadFile(Uri.parse(update.updateUrl));
+                    // TODO: 13/05/2017 Check if SHA is the same as the current version installed
+
+                    final Uri url = Uri.parse(update.updateUrl);
+                    final DownloadManager.Request request = toDownloadManagerRequest(url);
+
+                    rxDownloadManager.download(request).subscribe(new Consumer<DownloadRequest>() {
+                        @Override
+                        public void accept(@NonNull final DownloadRequest downloadRequest) throws Exception {
+                            final int downloadStatus = downloadRequest.getDownloadStatus();
+                            switch (downloadStatus) {
+//                                case DownloadRequest.STATUS_DOWNLOAD_SUCCESS:
+//                                    final Uri fileUri = downloadRequest.getFileUri();
+//                                    NewUpdatesBroadcastReceiver.newUpdateAvailable(context);
+//                                    break;
+//                                case DownloadRequest.STATUS_DOWNLOAD_FAILED:
+//                                    NewUpdatesBroadcastReceiver.errorDownloadingUpdate(context);
+//                                    break;
+                            }
+                            checkingUpdates.set(false);
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(@NonNull final Throwable throwable) throws Exception {
+                            checkingUpdates.set(false);
+                            NewUpdatesBroadcastReceiver.errorDownloadingUpdate(context);
+                        }
+                    });
                 } else {
+                    prefManager.save(ButterUpdateManager.LAST_UPDATE_CHECK, new Date().getTime());
                     checkingUpdates.set(false);
+                    NewUpdatesBroadcastReceiver.errorDownloadingUpdate(context);
                 }
             }
         });
-
-//            try {
-//                if (response.isSuccessful()) {
-//                    final UpdaterResponse data = gson.fromJson(response.body().charStream(), UpdaterResponse.class);
-//
-//                    final Map<String, Map<String, UpdaterResponse.Arch>> variant;
-//
-//                    if (variantStr.equals("tv")) {
-//                        variant = data.tv;
-//                    } else {
-//                        variant = data.mobile;
-//                    }
-//
-//                    UpdaterResponse.Arch channel = null;
-//                    if (variant.containsKey(channelStr) && variant.get(channelStr).containsKey(abi)) {
-//                        channel = variant.get(channelStr).get(abi);
-//                    }
-//
-//                    final ApplicationInfo appinfo = context.getApplicationInfo();
-//                    if ((channel == null || channel.checksum.equals(IntegrityUtils.SHA1.calculate(appinfo.sourceDir)) || channel.versionCode <= versionCode) && VersionUtils.isUsingCorrectBuild()) {
-////                        setChanged();
-////                        notifyObservers(STATUS_NO_UPDATE);
-//                    } else {
-//                        downloadFile(channel.updateUrl);
-////                        setChanged();
-////                        notifyObservers(STATUS_GOT_UPDATE);
-//                    }
-//                } else {
-////                    setChanged();
-////                    notifyObservers(STATUS_NO_UPDATE);
-//                }
-//            } catch (Exception e) {
-//                Timber.e("Error while trying to obtain a response from server: ", e);
-//            }
-//        }
-
-//        final File appApkFile = applicationMetadata.getAppApkFile();
-//        if (appApkFile.lastModified() > this.prefManager.get(SHA1_TIME, 0L)) {
-//            prefManager.save(SHA1_KEY, IntegrityUtils.SHA1.calculate(appApkFile.getAbsolutePath()));
-//            prefManager.save(SHA1_TIME, System.currentTimeMillis());
-//
-//            final String updateFilePath = this.prefManager.get(UPDATE_FILE, "");
-//            if (updateFilePath.length() > 0) {
-//                final File updateApkFile = new File(updateFilePath);
-//                if (updateApkFile.delete()) {
-//                    this.prefManager.remove(UPDATE_FILE);
-//                }
-//            }
-//        }
-//
-//        final long now = System.currentTimeMillis();
-//        final long lastUpdate = prefManager.get(LAST_UPDATE_CHECK, 0L);
-//
-//        prefManager.save(LAST_UPDATE_CHECK, now);
-//
-//        if ((lastUpdate + UPDATE_INTERVAL) < now) {
-//            prefManager.save(LAST_UPDATE_KEY, now);
-//
-//            if (!forced && BuildConfig.GIT_BRANCH.contains("local")) {
-//                return;
-//            }
-//
-//            final Request request = new Request.Builder().url(DATA_URLS[currentUrl]).build();
-//            httpClient.newCall(request).enqueue(callback);
-//        } else if (prefManager.contains(UPDATE_FILE)) {
-//            final String fileName = prefManager.get(UPDATE_FILE, "");
-//            if (fileName.length() > 0) {
-//                if (!new File(fileName).exists()) {
-//                    prefManager.remove(UPDATE_FILE);
-//                } else {
-////                    if (listener != null) {
-////                        listener.onNewUpdateAvailable(fileName);
-////                    }
-//                }
-//            }
-//        }
     }
 
-    private void downloadFile(final Uri url) {
+    private DownloadManager.Request toDownloadManagerRequest(final Uri url) {
         final File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        final String fileName = TextUtils.isEmpty(url.getLastPathSegment()) ? DEFAULT_BUTTER_APK_NAME : url.getLastPathSegment();
 
-        final DownloadManager.Request request = new DownloadManager.Request(url)
-                .setTitle("Title")
-                .setDestinationInExternalPublicDir(downloadsDir.getAbsolutePath(), "farfurfel.apk")
-                .setDescription("meilishuo desc")
+        return new DownloadManager.Request(url)
+                .setTitle(context.getString(R.string.butter_updater))
+                .setDestinationInExternalPublicDir(downloadsDir.getAbsolutePath(), fileName)
+                .setDescription(context.getString(R.string.downloading_new_butter_update))
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 .setVisibleInDownloadsUi(true)
-//                .allowScanningByMediaScanner()
-                .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI)
+                .setAllowedNetworkTypes(prefManager.get(Prefs.WIFI_ONLY, true) ? DownloadManager.Request.NETWORK_WIFI : DownloadManager
+                        .Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 .setMimeType(ANDROID_PACKAGE_MIME_TYPE);
-
-
-//        downloadId = downloadManager.enqueue(request);
-
-//        final Request request = new Request.Builder().url(url).build();
-//
-//        httpClient.newCall(request).enqueue(new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                // Update failed, notify back
-//                checkingUpdates.set(false);
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                if (response.isSuccessful()) {
-//                    final String fileName = url.substring(url.lastIndexOf('/') + 1);
-//                    final File downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-//                    final File downloadedFile = new File(downloadDirectory, fileName);
-//
-//                    final BufferedSink sink = Okio.buffer(Okio.sink(downloadedFile));
-//                    sink.writeAll(response.body().source());
-//                    sink.close();
-//
-//                    final String updateFilePath = downloadDirectory.getAbsolutePath() + "/" + fileName;
-//
-//                    prefManager.getPrefs().edit()
-//                            .putString(UPDATE_FILE, updateFilePath)
-//                            .putString(SHA1_KEY, IntegrityUtils.SHA1.calculate(updateFilePath))
-//                            .putLong(SHA1_TIME, System.currentTimeMillis())
-//                            .apply();
-//
-////                    if (listener != null) {
-////                        listener.onNewUpdateAvailable(updateFilePath);
-////                    }
-//                } else {
-//                    // Update failed, notify back
-//                    checkingUpdates.set(false);
-//                }
-//            }
-//        });
     }
 
 }
