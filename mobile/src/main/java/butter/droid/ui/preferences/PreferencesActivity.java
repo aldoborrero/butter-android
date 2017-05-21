@@ -37,7 +37,6 @@ import butter.droid.base.content.preferences.Prefs.PrefKey;
 import butter.droid.base.fragments.dialog.ChangeLogDialogFragment;
 import butter.droid.base.fragments.dialog.NumberPickerDialogFragment;
 import butter.droid.base.fragments.dialog.StringArraySelectorDialogFragment;
-import butter.droid.base.manager.internal.updater.ButterUpdateManager;
 import butter.droid.base.utils.ResourceUtils;
 import butter.droid.base.widget.recycler.RecyclerClickListener;
 import butter.droid.base.widget.recycler.RecyclerItemClickListener;
@@ -58,7 +57,6 @@ public class PreferencesActivity extends ButterBaseActivity implements Preferenc
     private static final String FRAGMENT_DIALOG_PICKER = "fragment_dialog_picker";
 
     @Inject PreferencesPresenter presenter;
-    @Inject ButterUpdateManager updateManager;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
@@ -213,8 +211,7 @@ public class PreferencesActivity extends ButterBaseActivity implements Preferenc
     }
 
     @Override
-    public void openPreciseSmallNumberSelector(@PrefKey final String key, @StringRes int title, int value, int min,
-            int max) {
+    public void openPreciseSmallNumberSelector(@PrefKey final String key, @StringRes int title, int value, int min, int max) {
         Bundle args = new Bundle();
         args.putString(NumberPickerDialogFragment.TITLE, getString(title));
         args.putInt(NumberPickerDialogFragment.MAX_VALUE, max);
@@ -232,7 +229,7 @@ public class PreferencesActivity extends ButterBaseActivity implements Preferenc
         dialogFragment.show(getSupportFragmentManager(), FRAGMENT_DIALOG_PICKER);
     }
 
-    @Override public void openActivity(Intent intent) {
+    @Override public void openActivity(final Intent intent) {
         startActivity(intent);
     }
 

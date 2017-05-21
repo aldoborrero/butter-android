@@ -258,7 +258,7 @@ public abstract class BasePreferencesPresenterImpl implements OnSharedPreference
                 updatePixelFormat(item);
                 break;
             case Prefs.CHECK_UPDATE:
-                updateManager.checkUpdates();
+                updateManager.checkUpdatesManually();
                 break;
             case Prefs.REPORT_BUG:
                 Intent i = new Intent(Intent.ACTION_VIEW);

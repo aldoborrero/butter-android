@@ -105,10 +105,18 @@ public class ButterUpdateManager {
         ButterUpdateManager.NOTIFICATION_ID += IntegrityUtils.Checksums.crc32(applicationMetadata.getPackageName());
     }
 
+    public void checkUpdatesManually() {
+        checkUpdates(true);
+    }
+
     public void checkUpdates() {
+        checkUpdates(false);
+    }
+
+    private void checkUpdates(boolean manuallyCheck) {
         if (checkingUpdates.getAndSet(true)) {
             // Ignoring until this is finished
-            // TODO: 13/05/2017 Display messages if user presses multiple times the button 
+            // TODO: 13/05/2017 Display messages if user presses multiple times the button
             return;
         }
 
@@ -117,7 +125,7 @@ public class ButterUpdateManager {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(final Call call, final IOException e) {
-                prefManager.save(ButterUpdateManager.LAST_UPDATE_CHECK, new Date().getTime());
+                updateLastUpdateCheckPreference();
                 checkingUpdates.set(false);
                 NewUpdatesBroadcastReceiver.setActionErrorChecking(context);
             }
@@ -160,7 +168,7 @@ public class ButterUpdateManager {
                         }
                     });
                 } else {
-                    prefManager.save(ButterUpdateManager.LAST_UPDATE_CHECK, new Date().getTime());
+                    updateLastUpdateCheckPreference();
                     checkingUpdates.set(false);
                     NewUpdatesBroadcastReceiver.errorDownloadingUpdate(context);
                 }
@@ -168,7 +176,7 @@ public class ButterUpdateManager {
         });
     }
 
-    private DownloadManager.Request toDownloadManagerRequest(final Uri url) {
+    private DownloadManager.Request toDownloadManagerRequest(final Uri url, final boolean manuallyCheck) {
         final File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         final String fileName = TextUtils.isEmpty(url.getLastPathSegment()) ? DEFAULT_BUTTER_APK_NAME : url.getLastPathSegment();
 
@@ -177,11 +185,14 @@ public class ButterUpdateManager {
                 .setDestinationInExternalPublicDir(downloadsDir.getAbsolutePath(), fileName)
                 .setDescription(context.getString(R.string.downloading_new_butter_update))
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setVisibleInDownloadsUi(true)
-                .setAllowedNetworkTypes(prefManager.get(Prefs.WIFI_ONLY, true) ? DownloadManager.Request.NETWORK_WIFI : DownloadManager
-                        .Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE)
+                .setVisibleInDownloadsUi(false)
+                .setAllowedNetworkTypes(!manuallyCheck && prefManager.get(Prefs.WIFI_ONLY, true) ? DownloadManager.Request.NETWORK_WIFI : DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE)
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 .setMimeType(ANDROID_PACKAGE_MIME_TYPE);
+    }
+
+    private void updateLastUpdateCheckPreference() {
+        prefManager.save(ButterUpdateManager.LAST_UPDATE_CHECK, new Date().getTime());
     }
 
 }

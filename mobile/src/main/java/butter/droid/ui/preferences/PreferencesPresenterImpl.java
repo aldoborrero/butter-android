@@ -44,7 +44,7 @@ public class PreferencesPresenterImpl extends BasePreferencesPresenterImpl imple
     @Override public void onCreate() {
         super.onCreate();
 
-        Map<String, PrefItem> items = preferencesHandler.getPreferenceItems(keys);
+        final Map<String, PrefItem> items = preferencesHandler.getPreferenceItems(keys);
         view.displayItems(keys, items);
     }
 
